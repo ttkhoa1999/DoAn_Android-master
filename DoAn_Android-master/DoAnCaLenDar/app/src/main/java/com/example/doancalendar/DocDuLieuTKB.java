@@ -47,8 +47,7 @@ import static com.example.doancalendar.MainActivity.MSSV;
 
 
 public class DocDuLieuTKB extends AppCompatActivity {
-
- ListView lv;
+    ListView lv;
  ArrayList<Thu> mang;
  Button btnTichHop, btnQuayLai;
  ProgressDialog dialog;
