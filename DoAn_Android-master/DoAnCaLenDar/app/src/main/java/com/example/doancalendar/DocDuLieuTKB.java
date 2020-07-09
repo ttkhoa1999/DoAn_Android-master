@@ -56,6 +56,7 @@ public class DocDuLieuTKB extends AppCompatActivity {
  Spinner spTuan;
  Spinner ChonHocki;
  public static String hocki="";
+ public static String url="";
  public static final String[] SCOPES = {"https://googleapis.com/auth/calendar"};
  public GoogleAccountCredential credential;
     @Override
@@ -68,14 +69,6 @@ public class DocDuLieuTKB extends AppCompatActivity {
        // credential = GoogleAccountCredential.usingOAuth2(
              //   getApplicationContext(), Arrays.asList(SCOPES))
               //  .setBackOff(new ExponentialBackOff());
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-               // dialog = ProgressDialog.show(DocDuLieuTKB.this, "", "Vui lòng chờ trong giây lát...", true);
-               // new DocJson().execute("https://absorbing-pollen-diplodocus.glitch.me/?studentID="+MSSV+"&yearStudy=2019-2020&termID=HK02&week=1");
-            }
-        });
         initC();
         ChonHocki.setSelection(1);
         if (ChonHocki.getSelectedItem()=="Học kỳ 1"){
@@ -124,6 +117,7 @@ public class DocDuLieuTKB extends AppCompatActivity {
             }
             dialog.cancel();
 
+
             //Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
         }
     }
@@ -170,7 +164,9 @@ public class DocDuLieuTKB extends AppCompatActivity {
        ChonHocki.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
            @Override
            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+               dialog = ProgressDialog.show(DocDuLieuTKB.this, "", "Vui lòng chờ trong giây lát...", true);
                 SpinnerTuan();
+                dialog.dismiss();
            }
 
            @Override
@@ -179,18 +175,20 @@ public class DocDuLieuTKB extends AppCompatActivity {
            }
        });
        spTuan=findViewById(R.id.spTuan);
-        spTuan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                dialog = ProgressDialog.show(DocDuLieuTKB.this, "", "Vui lòng chờ trong giây lát...", true);
-                new DocJson().execute("https://absorbing-pollen-diplodocus.glitch.me/?studentID="+MSSV+"&yearStudy=2019-2020&termID="+ChonHocki.getSelectedItem()+"&week="+spTuan.getSelectedItem());
+       spTuan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+           @Override
+           public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+               dialog = ProgressDialog.show(DocDuLieuTKB.this, "", "Vui lòng chờ trong giây lát...", true);
+               new DocJson().execute("https://absorbing-pollen-diplodocus.glitch.me/?studentID="+MSSV+"&yearStudy=2019-2020&termID="+ChonHocki.getSelectedItem()+"&week="+spTuan.getSelectedItem());
+           mang.clear();
+           }
 
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+           @Override
+           public void onNothingSelected(AdapterView<?> adapterView) {
 
-            }
-        });
+           }
+       });
+
     }
 
     public void SpinnerHocki() {
