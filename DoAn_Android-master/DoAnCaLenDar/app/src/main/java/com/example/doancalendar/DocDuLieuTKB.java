@@ -1,14 +1,17 @@
 package com.example.doancalendar;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +24,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
@@ -51,6 +53,9 @@ public class DocDuLieuTKB extends AppCompatActivity {
  ArrayList<Thu> mang;
  Button btnTichHop, btnQuayLai;
  ProgressDialog dialog;
+ Spinner spTuan;
+ Spinner ChonHocki;
+ public static String hocki="";
  public static final String[] SCOPES = {"https://googleapis.com/auth/calendar"};
  public GoogleAccountCredential credential;
     @Override
@@ -60,19 +65,28 @@ public class DocDuLieuTKB extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.LvLichHoc);
         mang = new ArrayList<Thu>();
 
-        credential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());
+       // credential = GoogleAccountCredential.usingOAuth2(
+             //   getApplicationContext(), Arrays.asList(SCOPES))
+              //  .setBackOff(new ExponentialBackOff());
 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                dialog = ProgressDialog.show(DocDuLieuTKB.this, "", "Vui lòng chờ trong giây lát...", true);
-                new DocJson().execute("https://future-attractive-rambutan.glitch.me/?studentID="+MSSV+"&fbclid=IwAR0WNT5AC-vsDKhzYaA6k9Dimf6PJACAQRvSgdV1S39wpqYUoT7ZNlLfJCs");
+               // dialog = ProgressDialog.show(DocDuLieuTKB.this, "", "Vui lòng chờ trong giây lát...", true);
+               // new DocJson().execute("https://absorbing-pollen-diplodocus.glitch.me/?studentID="+MSSV+"&yearStudy=2019-2020&termID=HK02&week=1");
             }
         });
-
         initC();
+        ChonHocki.setSelection(1);
+        if (ChonHocki.getSelectedItem()=="Học kỳ 1"){
+            hocki="HK01";
+        }
+        else if (ChonHocki.getSelectedItem()=="Học kỳ 2"){
+            hocki="HK02";
+        }
+        else if (ChonHocki.getSelectedItem()=="Học kỳ 3"){
+            hocki="HK03";
+        }
     }
 
     class DocJson extends AsyncTask<String, Integer, String>{
@@ -109,6 +123,7 @@ public class DocDuLieuTKB extends AppCompatActivity {
                 e.printStackTrace();
             }
             dialog.cancel();
+
             //Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
         }
     }
@@ -147,12 +162,92 @@ public class DocDuLieuTKB extends AppCompatActivity {
            @Override
            public void onClick(View view) {
                //oneEvent();
-               click("https://calendar.google.com");
+             //  click("https://calendar.google.com");
            }
        });
+       ChonHocki=findViewById(R.id.spHK);
+        SpinnerHocki();
+       ChonHocki.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+           @Override
+           public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                SpinnerTuan();
+           }
+
+           @Override
+           public void onNothingSelected(AdapterView<?> adapterView) {
+
+           }
+       });
+       spTuan=findViewById(R.id.spTuan);
+        spTuan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                dialog = ProgressDialog.show(DocDuLieuTKB.this, "", "Vui lòng chờ trong giây lát...", true);
+                new DocJson().execute("https://absorbing-pollen-diplodocus.glitch.me/?studentID="+MSSV+"&yearStudy=2019-2020&termID="+ChonHocki.getSelectedItem()+"&week="+spTuan.getSelectedItem());
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
-    public static rx.Observable<String> AddNewEvent(final GoogleAccountCredential credential)
+    public void SpinnerHocki() {
+
+        ArrayList<String> arrayhk = new ArrayList<String>();
+        arrayhk.add("HK01");
+        arrayhk.add("HK02");
+        arrayhk.add("HK03");
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, arrayhk);
+        ChonHocki.setAdapter(arrayAdapter);
+
+    }
+
+    public void SpinnerTuan()
+    {
+        if (ChonHocki.getSelectedItem()=="HK01")
+        {
+            ArrayList<String> arrayTuan=new ArrayList<String>();
+            arrayTuan.add("1");
+            arrayTuan.add("2");
+            arrayTuan.add("3");
+            arrayTuan.add("4");
+            arrayTuan.add("5");
+            arrayTuan.add("6");
+            arrayTuan.add("7");
+            arrayTuan.add("8");
+            arrayTuan.add("9");
+            ArrayAdapter arrayAdapter=new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,arrayTuan);
+            spTuan.setAdapter(arrayAdapter);
+        }
+        if(ChonHocki.getSelectedItem()=="HK02") {
+            ArrayList<String> arrayTuan=new ArrayList<String>();
+            arrayTuan.add("15");
+            arrayTuan.add("16");
+            arrayTuan.add("17");
+            arrayTuan.add("18");
+            arrayTuan.add("19");
+            arrayTuan.add("20");
+            arrayTuan.add("21");
+            arrayTuan.add("22");
+            arrayTuan.add("23");
+            ArrayAdapter arrayAdapter=new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,arrayTuan);
+            spTuan.setAdapter(arrayAdapter);
+        }
+        if(ChonHocki.getSelectedItem()=="HK03") {
+            ArrayList<String> arrayTuan=new ArrayList<String>();
+            arrayTuan.add("46");
+            arrayTuan.add("47");
+            arrayTuan.add("48");
+            arrayTuan.add("49");
+            arrayTuan.add("50");
+            ArrayAdapter arrayAdapter=new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,arrayTuan);
+            spTuan.setAdapter(arrayAdapter);
+        }
+    }
+
+   /* public static rx.Observable<String> AddNewEvent(final GoogleAccountCredential credential)
     {
         return Observable.defer(() -> {
             return Observable.just(createEvent(credential));
@@ -226,5 +321,5 @@ public class DocDuLieuTKB extends AppCompatActivity {
         intent.putExtra("endTime", cal.getTimeInMillis()+60*60*1000);
         intent.putExtra("title", "Test Import 1 sự kiện");
         startActivity(intent);
-    }
+    }*/
 }
