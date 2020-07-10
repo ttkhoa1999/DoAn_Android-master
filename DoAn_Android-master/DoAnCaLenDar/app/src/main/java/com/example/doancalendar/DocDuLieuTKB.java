@@ -2,17 +2,14 @@ package com.example.doancalendar;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,6 +21,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventAttendee;
 import com.google.api.services.calendar.model.EventDateTime;
@@ -41,10 +39,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
 import static com.example.doancalendar.MainActivity.MSSV;
 
 
@@ -57,7 +51,7 @@ public class DocDuLieuTKB extends AppCompatActivity {
  Spinner ChonHocki;
  public static String hocki="";
  public static String url="";
- public static final String[] SCOPES = {"https://googleapis.com/auth/calendar"};
+ public static final String[] SCOPES = {CalendarScopes.CALENDAR};
  public GoogleAccountCredential credential;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +59,9 @@ public class DocDuLieuTKB extends AppCompatActivity {
         setContentView(R.layout.listview);
         lv = (ListView) findViewById(R.id.LvLichHoc);
         mang = new ArrayList<Thu>();
-
-       // credential = GoogleAccountCredential.usingOAuth2(
-             //   getApplicationContext(), Arrays.asList(SCOPES))
-              //  .setBackOff(new ExponentialBackOff());
+        //credential = GoogleAccountCredential.usingOAuth2(
+        //        getApplicationContext(), Arrays.asList(SCOPES))
+        //       .setBackOff(new ExponentialBackOff());
         initC();
         ChonHocki.setSelection(1);
         if (ChonHocki.getSelectedItem()=="Học kỳ 1"){
@@ -155,7 +148,12 @@ public class DocDuLieuTKB extends AppCompatActivity {
        btnTichHop.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-               //oneEvent();
+               runOnUiThread(new Runnable() {
+                   @Override
+                   public void run() {
+                    //   new ImportEvent().execute();
+                   }
+               });
              //  click("https://calendar.google.com");
            }
        });
@@ -245,7 +243,7 @@ public class DocDuLieuTKB extends AppCompatActivity {
         }
     }
 
-   /* public static rx.Observable<String> AddNewEvent(final GoogleAccountCredential credential)
+    /*public static rx.Observable<String> AddNewEvent(final GoogleAccountCredential credential)
     {
         return Observable.defer(() -> {
             return Observable.just(createEvent(credential));
@@ -253,14 +251,23 @@ public class DocDuLieuTKB extends AppCompatActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io());
     }
-    public static String createEvent(GoogleAccountCredential mCredential) {
+    class ImportEvent extends AsyncTask<String, Integer, Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            createEvent(credential);
+            return null;
+        }
+
+    }
+    public  String createEvent(GoogleAccountCredential mCredential) {
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         Calendar service = new Calendar.Builder(transport, jsonFactory, mCredential)
                 .setApplicationName("Calendar")
                 .build();
         Event event = new Event()
-                .setSummary("")
+                .setSummary("Học bài")
                 .setLocation("KTX Đại Học Đà Lạt")
                 .setDescription("");
 
